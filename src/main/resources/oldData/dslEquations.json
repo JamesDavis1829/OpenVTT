@@ -1,0 +1,62 @@
+{
+  "page": 1,
+  "perPage": 30,
+  "totalItems": 6,
+  "totalPages": 1,
+  "items": [
+    {
+      "collectionId": "na9v1vc7838apuy",
+      "collectionName": "dslequations",
+      "created": "2023-02-11 19:48:38.821Z",
+      "equation": "mod = dur() + 3; lvl() * mod + 7",
+      "id": "g7328zqjzmfptfl",
+      "name": "Calculate Max HP",
+      "updated": "2023-02-14 03:44:27.426Z"
+    },
+    {
+      "collectionId": "na9v1vc7838apuy",
+      "collectionName": "dslequations",
+      "created": "2023-02-11 19:49:17.358Z",
+      "equation": "mod = sta() + 5; lvl() * mod + 5",
+      "id": "hvk4ebqxzgsvlk8",
+      "name": "Calculate Max Stamina",
+      "updated": "2023-02-14 03:44:17.410Z"
+    },
+    {
+      "collectionId": "na9v1vc7838apuy",
+      "collectionName": "dslequations",
+      "created": "2023-02-13 13:30:35.830Z",
+      "equation": "agi() + agi()",
+      "id": "gvkgch3ytenjcw1",
+      "name": "Expert agi",
+      "updated": "2023-02-14 03:44:03.098Z"
+    },
+    {
+      "collectionId": "na9v1vc7838apuy",
+      "collectionName": "dslequations",
+      "created": "2023-02-13 13:32:12.099Z",
+      "equation": "roll(1,10) + agi() + int()",
+      "id": "0f6y7q2dggopttx",
+      "name": "Arcane Shield",
+      "updated": "2023-02-14 03:43:52.737Z"
+    },
+    {
+      "collectionId": "na9v1vc7838apuy",
+      "collectionName": "dslequations",
+      "created": "2023-02-13 13:34:08.920Z",
+      "equation": "num = int() + ins(); num / 2",
+      "id": "hymvpwrlnfx2r6o",
+      "name": "Charisma Mod",
+      "updated": "2023-02-14 03:43:35.193Z"
+    },
+    {
+      "collectionId": "na9v1vc7838apuy",
+      "collectionName": "dslequations",
+      "created": "2023-02-13 13:36:10.137Z",
+      "equation": "ins() + ins()",
+      "id": "m0cyjxfv0yiu6yr",
+      "name": "Expert Ins",
+      "updated": "2023-02-14 03:43:18.323Z"
+    }
+  ]
+}
