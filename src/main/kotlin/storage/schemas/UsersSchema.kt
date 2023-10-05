@@ -1,4 +1,4 @@
-package org.roll10.plugins
+package storage.schemas
 
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -8,12 +8,12 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 
 @Serializable
-data class ExposedUser(val name: String, val age: Int)
-class UserService(private val database: Database) {
+data class ExposedUser(val id: Int, val name: String, val email: String)
+class UserService(database: Database) {
     object Users : Table() {
         val id = integer("id").autoIncrement()
         val name = varchar("name", length = 50)
-        val age = integer("age")
+        val email = varchar("email", length = 100)
 
         override val primaryKey = PrimaryKey(id)
     }
@@ -30,14 +30,15 @@ class UserService(private val database: Database) {
     suspend fun create(user: ExposedUser): Int = dbQuery {
         Users.insert {
             it[name] = user.name
-            it[age] = user.age
+            it[email] = user.email
+            it[id] = user.id
         }[Users.id]
     }
 
     suspend fun read(id: Int): ExposedUser? {
         return dbQuery {
             Users.select { Users.id eq id }
-                .map { ExposedUser(it[Users.name], it[Users.age]) }
+                .map { ExposedUser(it[Users.id], it[Users.name], it[Users.email]) }
                 .singleOrNull()
         }
     }
@@ -46,7 +47,7 @@ class UserService(private val database: Database) {
         dbQuery {
             Users.update({ Users.id eq id }) {
                 it[name] = user.name
-                it[age] = user.age
+                it[email] = user.email
             }
         }
     }
