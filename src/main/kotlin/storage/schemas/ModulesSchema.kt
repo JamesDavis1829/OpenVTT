@@ -10,13 +10,16 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.roll10.plugins.jsonParser
 
-@Serializable data class ExposedModule(val id: Int, val data: ExposedModuleData)
+@Serializable data class ExposedModule(val id: Int, val data: ExposedModuleData, val userId: Int)
 @Serializable data class ExposedModuleData(val name: String)
 
 class ModuleService(database: Database) {
     object Modules: Table() {
         val id = integer("id").autoIncrement()
         val data = text("data")
+        val userId = reference("user", UserService.Users.id)
+
+        override val primaryKey = PrimaryKey(id)
     }
 
     init {
@@ -32,28 +35,31 @@ class ModuleService(database: Database) {
         Modules.insert {
             it[data] = Json.encodeToString(module.data)
             it[id] = module.id
+            it[userId] = module.userId
         }[UserService.Users.id]
     }
 
-    suspend fun read(id: Int): ExposedModule? {
+    suspend fun getUserModules(userId: Int): List<ExposedModule> {
         return dbQuery {
-            Modules.select { Modules.id eq id }
-                .map { ExposedModule(it[Modules.id], jsonParser.decodeFromString(it[Modules.data])) }
-                .singleOrNull()
+            Modules.select { Modules.userId eq userId }
+                .map { ExposedModule(
+                    it[Modules.id],
+                    jsonParser.decodeFromString(it[Modules.data]),
+                    it[Modules.userId]) }
         }
     }
 
-    suspend fun update(id: Int, user: ExposedModule) {
+    suspend fun update(id: Int, userId: Int, module: ExposedModule) {
         dbQuery {
-            Modules.update({ Modules.id eq id }) {
-                it[data] = Json.encodeToString(data)
+            Modules.update({ Modules.id eq id and (Modules.userId eq userId) }) {
+                it[data] = Json.encodeToString(module.data)
             }
         }
     }
 
-    suspend fun delete(id: Int) {
+    suspend fun delete(id: Int, userId: Int) {
         dbQuery {
-            Modules.deleteWhere { Modules.id.eq(id) }
+            Modules.deleteWhere { Modules.id eq id and (Modules.userId eq userId) }
         }
     }
 }

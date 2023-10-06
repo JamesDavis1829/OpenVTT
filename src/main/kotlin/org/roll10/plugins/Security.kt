@@ -5,7 +5,6 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.http.headers
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
@@ -13,8 +12,10 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import storage.schemas.ExposedUser
+import storage.schemas.UserService
 
-data class OpenVttSession(val accessToken: String, val username: String)
+data class OpenVttSession(val accessToken: String, val username: String, val userId: Int)
 @Serializable
 data class UserProfile(val email: String)
 val apacheClient = HttpClient(Apache)
@@ -23,6 +24,7 @@ val jsonParser = Json {
 }
 
 fun Application.configureSecurity() {
+    val userService = UserService(database)
     authentication {
         oauth("auth-oauth-google") {
             urlProvider = { "http://localhost:8080/redirect" }
@@ -60,7 +62,8 @@ fun Application.configureSecurity() {
                     }
                 }.body()
                 val userProfile: UserProfile = jsonParser.decodeFromString(userInfoPayload)
-                call.sessions.set(OpenVttSession(token, userProfile.email))
+                val user = userService.read(userProfile.email) ?: userService.create(ExposedUser(0, userProfile.email))
+                call.sessions.set(OpenVttSession(token, user.email, user.id))
                 call.respondRedirect("/")
             }
         }
